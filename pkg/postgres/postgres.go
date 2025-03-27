@@ -1,41 +1,51 @@
 package postgres
 
 import (
-	"context"
-	"fmt"
-	"time"
+	"database/sql"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+
+	//nolint
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
+
+	"github.com/rightDesire/facultativeproject/internal/helpers"
 )
 
-// Creds описывает конфигурацию подключения к PostgreSQL.
-// Обычно эти данные берутся из переменных окружения или из .env
-type Creds struct {
-	DSN string // DSN = Data Source Name, например: "postgres://user:pass@host:5432/dbname?sslmode=disable"
+type PDB struct {
+	DB *sql.DB
 }
 
-// NewGDB инициализирует пул соединений к PostgreSQL.
-func NewGDB(ctx context.Context, creds Creds) (*pgxpool.Pool, error) {
-	config, err := pgxpool.ParseConfig(creds.DSN)
+type Creds string
+
+func NewPDB(creds Creds) (*PDB, error) {
+	connStr, err := helpers.ConvertPostgresCreds(string(creds))
 	if err != nil {
-		return nil, fmt.Errorf("parse config error: %w", err)
+		return nil, err
 	}
 
-	// Настраиваем параметры пула, если нужно
-	config.MaxConns = 10
-	config.MinConns = 2
-	config.HealthCheckPeriod = 2 * time.Minute
-
-	pool, err := pgxpool.NewWithConfig(ctx, config)
+	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		return nil, fmt.Errorf("create pool error: %w", err)
+		return nil, err
 	}
 
-	// Проверяем, что подключение успешно
-	if err := pool.Ping(ctx); err != nil {
-		pool.Close()
-		return nil, fmt.Errorf("ping db error: %w", err)
+	return &PDB{DB: db}, nil
+}
+
+func (p *PDB) Migrate(migratePath string) error {
+	driver, err := postgres.WithInstance(p.DB, &postgres.Config{
+		MigrationsTable: "migrations",
+	})
+	if err != nil {
+		return err
+	}
+	m, err := migrate.NewWithDatabaseInstance(
+		"file:"+migratePath,
+		"postgres", driver)
+	if err != nil {
+		return err
 	}
 
-	return pool, nil
+	return m.Up()
 }
