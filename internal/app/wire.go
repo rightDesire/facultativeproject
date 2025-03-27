@@ -7,7 +7,7 @@ import (
 
 func InitApp() *App {
 	wire.Build(
-		configs.NewConfigsFromEnv(),
+		configs.NewConfigsFromEnv,
 
 		NewApp,
 	)
