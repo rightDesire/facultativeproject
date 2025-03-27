@@ -32,4 +32,7 @@ migrate:
 .PHONY: migrate-down
 migrate-down:
 	migrate -path ./migrations -database "postgres://rightdesire:secret@postgres:5432/main?sslmode=disable" down  
-	
+
+.PHONY: lint
+lint:
+	golangci-lint run --out-format=colored-line-number
