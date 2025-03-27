@@ -2,6 +2,7 @@ package geometry
 
 import (
 	"database/sql/driver"
+	"errors"
 	"fmt"
 
 	"github.com/twpayne/go-geom"
@@ -10,6 +11,17 @@ import (
 
 type Geometry struct {
 	geom.T
+}
+
+func (g Geometry) String() (string, error) {
+	if g.T == nil {
+		return "", errors.New("geometry is nil")
+	}
+	s, err := wkt.Marshal(g.T)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal geometry to WKT: %w", err)
+	}
+	return s, nil
 }
 
 func (g Geometry) Value() (driver.Value, error) {
