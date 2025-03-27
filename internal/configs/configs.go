@@ -6,6 +6,8 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/rightDesire/facultativeproject/internal/helpers"
+	"github.com/rightDesire/facultativeproject/pkg/postgres"
+	"github.com/rightDesire/facultativeproject/pkg/redis"
 	"github.com/sirupsen/logrus"
 
 	env "github.com/caarlos0/env/v6"
@@ -23,10 +25,10 @@ type Configs struct {
 	ENV string `env:"ENV" default:"prod"`
 
 	// DB
-	DB_CREDS string `env:"DB_CREDS" secured:"true"`
+	DB_CREDS postgres.Creds `env:"DB_CREDS" secured:"true"`
 
 	// Redis
-	REDIS_CREDS string `env:"REDIS_CREDS" secured:"true"`
+	REDIS_CREDS redis.Creds `env:"REDIS_CREDS" secured:"true"`
 
 	// SMTP
 	SMTP_ENABLE bool   `env:"SMTP_ENABLE" envDefault:"true"`
