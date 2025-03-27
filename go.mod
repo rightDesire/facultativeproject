@@ -19,6 +19,7 @@ require (
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/samber/lo v1.49.1
 	github.com/sirupsen/logrus v1.9.3
+	github.com/twpayne/go-geom v1.6.0
 	golang.org/x/crypto v0.36.0
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
 	gorm.io/driver/postgres v1.5.11
