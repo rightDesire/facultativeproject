@@ -1,0 +1,17 @@
+{
+    "buttons": [
+      {
+        "label": "Run",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Run",
+        "tooltip": "Запустить приложение (make run)"
+      },
+      {
+        "label": "Wire",
+        "command": "workbench.action.tasks.runTask",
+        "args": "Wire",
+        "tooltip": "Генерация зависимостей (make wire)"
+      }
+    ]
+  }
+  

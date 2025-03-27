@@ -1,1 +1,5 @@
-package web
+package main
+
+func main() {
+
+}
