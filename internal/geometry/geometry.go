@@ -13,7 +13,7 @@ type Geometry struct {
 	geom.T
 }
 
-func (g Geometry) String() (string, error) {
+func (g Geometry) ToString() (string, error) {
 	if g.T == nil {
 		return "", errors.New("geometry is nil")
 	}

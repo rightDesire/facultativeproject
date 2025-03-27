@@ -21,15 +21,15 @@ wire:
 # 	oapi-codegen -config openapi/.openapi  -include-tags reminder -package oreminder openapi/openapi.yaml > ./internal/web/oreminder/api.gen.go
 # 	oapi-codegen -config openapi/.openapi  -include-tags catalog -package ocatalog openapi/openapi.yaml > ./internal/web/ocatalog/api.gen.go
 
-# .PHONY: migrate-new
-# migrate-new:
-# 	migrate create -ext sql -dir ./migrations ${NAME}
+.PHONY: migrate-new
+migrate-new:
+	migrate create -ext sql -dir ./migrations ${NAME}
 
-# .PHONY: migrate
-# migrate:
-# 	migrate -path ./migrations -database "postgres://default:secret@postgres:5432/main?sslmode=disable" up 
+.PHONY: migrate
+migrate:
+	migrate -path ./migrations -database "postgres://rightdesire:secret@postgres:5432/main?sslmode=disable" up 
 
-# .PHONY: migrate-down
-# migrate-down:
-# 	migrate -path ./migrations -database "postgres://default:secret@postgres:5432/main?sslmode=disable" down  
+.PHONY: migrate-down
+migrate-down:
+	migrate -path ./migrations -database "postgres://rightdesire:secret@postgres:5432/main?sslmode=disable" down  
 	
