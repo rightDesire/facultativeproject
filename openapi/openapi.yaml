@@ -1,19 +1,418 @@
 openapi: 3.0.4
 info:
-  version: 0.0.1
-  title: CRM API
-  description: A main CRM API
+  title: Tourism Monitoring API
+  description: API для мониторинга и анализа туристических маршрутов в Москве
+  version: "1.0.0"
   contact:
     name: rightDesire
 
 servers:
-  - url: "localhost:8080"
+  - url: http://localhost:8080/api
     description: Dev server
 
 tags:
   - name: user
-    description: User
+    description: Операции, связанные с пользователями
   - name: route
-    description: Route
-  
-  
+    description: Операции, связанные с маршрутами
+
+paths:
+  /users/register:
+    post:
+      tags:
+        - user
+      summary: Регистрация нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegisterRequest"
+      responses:
+        "201":
+          description: Пользователь успешно зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "400":
+          description: Некорректный ввод
+
+  /users/login:
+    post:
+      tags:
+        - user
+      summary: Аутентификация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLoginRequest"
+      responses:
+        "200":
+          description: Успешный вход в систему
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthTokenDTO"
+        "401":
+          description: Неавторизовано
+
+  /users/{userId}:
+    get:
+      tags:
+        - user
+      summary: Получить профиль пользователя
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      responses:
+        "200":
+          description: Профиль пользователя получен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "404":
+          description: Пользователь не найден
+    put:
+      tags:
+        - user
+      summary: Обновление профиля пользователя
+      parameters:
+        - $ref: "#/components/parameters/userId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "200":
+          description: Пользователь успешно обновлен
+        "400":
+          description: Некорректный ввод
+
+  /routes:
+    get:
+      tags:
+        - route
+      summary: Получение списка маршрутов
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Список маршрутов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RouteDTO"
+    post:
+      tags:
+        - route
+      summary: Создание нового маршрута (Административная операция)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteCreateRequest"
+      responses:
+        "201":
+          description: Маршрут успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteDTO"
+
+  /routes/{routeId}:
+    get:
+      tags:
+        - route
+      summary: Получение информации о маршруте по ID
+      parameters:
+        - $ref: "#/components/parameters/routeId"
+      responses:
+        "200":
+          description: Детали маршрута
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteDTO"
+        "404":
+          description: Маршрут не найден
+    put:
+      tags:
+        - route
+      summary: Обновление маршрута (Административная операция)
+      parameters:
+        - $ref: "#/components/parameters/routeId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteUpdateRequest"
+      responses:
+        "200":
+          description: Маршрут успешно обновлен
+    delete:
+      tags:
+        - route
+      summary: Удаление маршрута (soft delete)
+      parameters:
+        - $ref: "#/components/parameters/routeId"
+      responses:
+        "204":
+          description: Маршрут удален
+
+  /visits:
+    post:
+      tags:
+        - route
+      summary: Регистрация прохождения маршрута пользователем
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VisitCreateRequest"
+      responses:
+        "201":
+          description: Прохождение маршрута зарегистрировано
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VisitDTO"
+
+  /reviews:
+    post:
+      tags:
+        - route
+      summary: Добавление отзыва на маршрут
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewCreateRequest"
+      responses:
+        "201":
+          description: Отзыв добавлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewDTO"
+    get:
+      tags:
+        - route
+      summary: Получение списка отзывов для маршрута
+      parameters:
+        - in: query
+          name: routeId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Список отзывов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReviewDTO"
+
+  /analytics/routes:
+    get:
+      tags:
+        - route
+      summary: Получение агрегированной аналитики для маршрутов
+      responses:
+        "200":
+          description: Данные аналитики
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+
+components:
+  parameters:
+    userId:
+      name: userId
+      in: path
+      required: true
+      schema:
+        type: string
+    routeId:
+      name: routeId
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    UserRegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+      required:
+        - email
+        - password
+    UserLoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required:
+        - email
+        - password
+    AuthTokenDTO:
+      type: object
+      properties:
+        token:
+          type: string
+    UserDTO:
+      type: object
+      properties:
+        uuid:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UserUpdateRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        fullName:
+          type: string
+        password:
+          type: string
+    RouteDTO:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        length:
+          type: number
+        coordinates:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RouteCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        length:
+          type: number
+        coordinates:
+          type: string
+      required:
+        - name
+        - coordinates
+    RouteUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        length:
+          type: number
+        coordinates:
+          type: string
+    VisitDTO:
+      type: object
+      properties:
+        uuid:
+          type: string
+        userId:
+          type: string
+        routeId:
+          type: string
+        visitTime:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+    VisitCreateRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        routeId:
+          type: string
+      required:
+        - userId
+        - routeId
+    ReviewDTO:
+      type: object
+      properties:
+        uuid:
+          type: string
+        userId:
+          type: string
+        routeId:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ReviewCreateRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        routeId:
+          type: string
+        rating:
+          type: integer
+        comment:
+          type: string
+      required:
+        - userId
+        - routeId
+        - rating
