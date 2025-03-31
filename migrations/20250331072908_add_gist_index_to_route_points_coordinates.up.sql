@@ -1,0 +1,1 @@
+CREATE INDEX idx_route_points_coordinates ON route_points USING GIST (coordinates);
