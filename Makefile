@@ -6,6 +6,13 @@ run:
 wire:
 	wire ./internal/app/
 
+.PHONY: proto
+proto:
+	protoc -I proto \
+		--go_out=paths=source_relative:./internal/users/proto \
+		--go-grpc_out=paths=source_relative:./internal/users/proto \
+		proto/users/*.proto
+
 .PHONY: gen
 gen:  
 	for tag in ouser oroute; do \

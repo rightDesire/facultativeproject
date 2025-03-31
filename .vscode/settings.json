@@ -27,6 +27,12 @@
             },
             {
                 "cwd": "${workspaceFolder}",
+                "name": "proto-gen",
+                "singleInstance": true,
+                "command": "make proto-gen", // This is executed in the terminal.
+            },
+            {
+                "cwd": "${workspaceFolder}",
                 "name": "lint",
                 "singleInstance": true,
                 "command": "make lint", // This is executed in the terminal.

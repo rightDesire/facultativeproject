@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
 	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // AuthTokenDTO defines model for AuthTokenDTO.
@@ -20,13 +21,18 @@ type AuthTokenDTO struct {
 	Token *string `json:"token,omitempty"`
 }
 
+// UUIDResponse defines model for UUIDResponse.
+type UUIDResponse struct {
+	Uuid openapi_types.UUID `json:"uuid"`
+}
+
 // UserDTO defines model for UserDTO.
 type UserDTO struct {
+	UUID      *string    `json:"UUID,omitempty"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	Email     *string    `json:"email,omitempty"`
 	FullName  *string    `json:"fullName,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
-	Uuid      *string    `json:"uuid,omitempty"`
 }
 
 // UserLoginRequest defines model for UserLoginRequest.
@@ -49,8 +55,8 @@ type UserUpdateRequest struct {
 	Password *string `json:"password,omitempty"`
 }
 
-// UserId defines model for userId.
-type UserId = string
+// UserUUID defines model for userUUID.
+type UserUUID = string
 
 // PostUsersLoginJSONRequestBody defines body for PostUsersLogin for application/json ContentType.
 type PostUsersLoginJSONRequestBody = UserLoginRequest
@@ -58,8 +64,8 @@ type PostUsersLoginJSONRequestBody = UserLoginRequest
 // PostUsersRegisterJSONRequestBody defines body for PostUsersRegister for application/json ContentType.
 type PostUsersRegisterJSONRequestBody = UserRegisterRequest
 
-// PutUsersUserIdJSONRequestBody defines body for PutUsersUserId for application/json ContentType.
-type PutUsersUserIdJSONRequestBody = UserUpdateRequest
+// PutUsersUserUUIDJSONRequestBody defines body for PutUsersUserUUID for application/json ContentType.
+type PutUsersUserUUIDJSONRequestBody = UserUpdateRequest
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
@@ -70,11 +76,11 @@ type ServerInterface interface {
 	// (POST /users/register)
 	PostUsersRegister(ctx echo.Context) error
 	// Получить профиль пользователя
-	// (GET /users/{userId})
-	GetUsersUserId(ctx echo.Context, userId UserId) error
+	// (GET /users/{userUUID})
+	GetUsersUserUUID(ctx echo.Context, userUUID UserUUID) error
 	// Обновление профиля пользователя
-	// (PUT /users/{userId})
-	PutUsersUserId(ctx echo.Context, userId UserId) error
+	// (PUT /users/{userUUID})
+	PutUsersUserUUID(ctx echo.Context, userUUID UserUUID) error
 }
 
 // ServerInterfaceWrapper converts echo contexts to parameters.
@@ -100,35 +106,35 @@ func (w *ServerInterfaceWrapper) PostUsersRegister(ctx echo.Context) error {
 	return err
 }
 
-// GetUsersUserId converts echo context to params.
-func (w *ServerInterfaceWrapper) GetUsersUserId(ctx echo.Context) error {
+// GetUsersUserUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetUsersUserUUID(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
+	// ------------- Path parameter "userUUID" -------------
+	var userUUID UserUUID
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "userId", runtime.ParamLocationPath, ctx.Param("userId"), &userId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "userUUID", runtime.ParamLocationPath, ctx.Param("userUUID"), &userUUID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter userId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter userUUID: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetUsersUserId(ctx, userId)
+	err = w.Handler.GetUsersUserUUID(ctx, userUUID)
 	return err
 }
 
-// PutUsersUserId converts echo context to params.
-func (w *ServerInterfaceWrapper) PutUsersUserId(ctx echo.Context) error {
+// PutUsersUserUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) PutUsersUserUUID(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "userId" -------------
-	var userId UserId
+	// ------------- Path parameter "userUUID" -------------
+	var userUUID UserUUID
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "userId", runtime.ParamLocationPath, ctx.Param("userId"), &userId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "userUUID", runtime.ParamLocationPath, ctx.Param("userUUID"), &userUUID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter userId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter userUUID: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PutUsersUserId(ctx, userId)
+	err = w.Handler.PutUsersUserUUID(ctx, userUUID)
 	return err
 }
 
@@ -162,8 +168,8 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 
 	router.POST(baseURL+"/users/login", wrapper.PostUsersLogin)
 	router.POST(baseURL+"/users/register", wrapper.PostUsersRegister)
-	router.GET(baseURL+"/users/:userId", wrapper.GetUsersUserId)
-	router.PUT(baseURL+"/users/:userId", wrapper.PutUsersUserId)
+	router.GET(baseURL+"/users/:userUUID", wrapper.GetUsersUserUUID)
+	router.PUT(baseURL+"/users/:userUUID", wrapper.PutUsersUserUUID)
 
 }
 
@@ -200,7 +206,7 @@ type PostUsersRegisterResponseObject interface {
 	VisitPostUsersRegisterResponse(w http.ResponseWriter) error
 }
 
-type PostUsersRegister201JSONResponse UserDTO
+type PostUsersRegister201JSONResponse UUIDResponse
 
 func (response PostUsersRegister201JSONResponse) VisitPostUsersRegisterResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -217,52 +223,53 @@ func (response PostUsersRegister400Response) VisitPostUsersRegisterResponse(w ht
 	return nil
 }
 
-type GetUsersUserIdRequestObject struct {
-	UserId UserId `json:"userId"`
+type GetUsersUserUUIDRequestObject struct {
+	UserUUID UserUUID `json:"userUUID"`
 }
 
-type GetUsersUserIdResponseObject interface {
-	VisitGetUsersUserIdResponse(w http.ResponseWriter) error
+type GetUsersUserUUIDResponseObject interface {
+	VisitGetUsersUserUUIDResponse(w http.ResponseWriter) error
 }
 
-type GetUsersUserId200JSONResponse UserDTO
+type GetUsersUserUUID200JSONResponse UserDTO
 
-func (response GetUsersUserId200JSONResponse) VisitGetUsersUserIdResponse(w http.ResponseWriter) error {
+func (response GetUsersUserUUID200JSONResponse) VisitGetUsersUserUUIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetUsersUserId404Response struct {
+type GetUsersUserUUID404Response struct {
 }
 
-func (response GetUsersUserId404Response) VisitGetUsersUserIdResponse(w http.ResponseWriter) error {
+func (response GetUsersUserUUID404Response) VisitGetUsersUserUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(404)
 	return nil
 }
 
-type PutUsersUserIdRequestObject struct {
-	UserId UserId `json:"userId"`
-	Body   *PutUsersUserIdJSONRequestBody
+type PutUsersUserUUIDRequestObject struct {
+	UserUUID UserUUID `json:"userUUID"`
+	Body     *PutUsersUserUUIDJSONRequestBody
 }
 
-type PutUsersUserIdResponseObject interface {
-	VisitPutUsersUserIdResponse(w http.ResponseWriter) error
+type PutUsersUserUUIDResponseObject interface {
+	VisitPutUsersUserUUIDResponse(w http.ResponseWriter) error
 }
 
-type PutUsersUserId200Response struct {
-}
+type PutUsersUserUUID200JSONResponse UserDTO
 
-func (response PutUsersUserId200Response) VisitPutUsersUserIdResponse(w http.ResponseWriter) error {
+func (response PutUsersUserUUID200JSONResponse) VisitPutUsersUserUUIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
-	return nil
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-type PutUsersUserId400Response struct {
+type PutUsersUserUUID400Response struct {
 }
 
-func (response PutUsersUserId400Response) VisitPutUsersUserIdResponse(w http.ResponseWriter) error {
+func (response PutUsersUserUUID400Response) VisitPutUsersUserUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(400)
 	return nil
 }
@@ -276,11 +283,11 @@ type StrictServerInterface interface {
 	// (POST /users/register)
 	PostUsersRegister(ctx context.Context, request PostUsersRegisterRequestObject) (PostUsersRegisterResponseObject, error)
 	// Получить профиль пользователя
-	// (GET /users/{userId})
-	GetUsersUserId(ctx context.Context, request GetUsersUserIdRequestObject) (GetUsersUserIdResponseObject, error)
+	// (GET /users/{userUUID})
+	GetUsersUserUUID(ctx context.Context, request GetUsersUserUUIDRequestObject) (GetUsersUserUUIDResponseObject, error)
 	// Обновление профиля пользователя
-	// (PUT /users/{userId})
-	PutUsersUserId(ctx context.Context, request PutUsersUserIdRequestObject) (PutUsersUserIdResponseObject, error)
+	// (PUT /users/{userUUID})
+	PutUsersUserUUID(ctx context.Context, request PutUsersUserUUIDRequestObject) (PutUsersUserUUIDResponseObject, error)
 }
 
 type StrictHandlerFunc = strictecho.StrictEchoHandlerFunc
@@ -353,56 +360,56 @@ func (sh *strictHandler) PostUsersRegister(ctx echo.Context) error {
 	return nil
 }
 
-// GetUsersUserId operation middleware
-func (sh *strictHandler) GetUsersUserId(ctx echo.Context, userId UserId) error {
-	var request GetUsersUserIdRequestObject
+// GetUsersUserUUID operation middleware
+func (sh *strictHandler) GetUsersUserUUID(ctx echo.Context, userUUID UserUUID) error {
+	var request GetUsersUserUUIDRequestObject
 
-	request.UserId = userId
+	request.UserUUID = userUUID
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetUsersUserId(ctx.Request().Context(), request.(GetUsersUserIdRequestObject))
+		return sh.ssi.GetUsersUserUUID(ctx.Request().Context(), request.(GetUsersUserUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetUsersUserId")
+		handler = middleware(handler, "GetUsersUserUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(GetUsersUserIdResponseObject); ok {
-		return validResponse.VisitGetUsersUserIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(GetUsersUserUUIDResponseObject); ok {
+		return validResponse.VisitGetUsersUserUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
 	return nil
 }
 
-// PutUsersUserId operation middleware
-func (sh *strictHandler) PutUsersUserId(ctx echo.Context, userId UserId) error {
-	var request PutUsersUserIdRequestObject
+// PutUsersUserUUID operation middleware
+func (sh *strictHandler) PutUsersUserUUID(ctx echo.Context, userUUID UserUUID) error {
+	var request PutUsersUserUUIDRequestObject
 
-	request.UserId = userId
+	request.UserUUID = userUUID
 
-	var body PutUsersUserIdJSONRequestBody
+	var body PutUsersUserUUIDJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 	request.Body = &body
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PutUsersUserId(ctx.Request().Context(), request.(PutUsersUserIdRequestObject))
+		return sh.ssi.PutUsersUserUUID(ctx.Request().Context(), request.(PutUsersUserUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PutUsersUserId")
+		handler = middleware(handler, "PutUsersUserUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(PutUsersUserIdResponseObject); ok {
-		return validResponse.VisitPutUsersUserIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(PutUsersUserUUIDResponseObject); ok {
+		return validResponse.VisitPutUsersUserUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

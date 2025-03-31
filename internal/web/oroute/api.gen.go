@@ -13,25 +13,26 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/oapi-codegen/runtime"
 	strictecho "github.com/oapi-codegen/runtime/strictmiddleware/echo"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // ReviewCreateRequest defines model for ReviewCreateRequest.
 type ReviewCreateRequest struct {
-	Comment *string `json:"comment,omitempty"`
-	Rating  int     `json:"rating"`
-	RouteId string  `json:"routeId"`
-	UserId  string  `json:"userId"`
+	Comment   *string `json:"comment,omitempty"`
+	Rating    int     `json:"rating"`
+	RouteUUID string  `json:"routeUUID"`
+	UserUUID  string  `json:"userUUID"`
 }
 
 // ReviewDTO defines model for ReviewDTO.
 type ReviewDTO struct {
+	UUID      *string    `json:"UUID,omitempty"`
 	Comment   *string    `json:"comment,omitempty"`
 	CreatedAt *time.Time `json:"createdAt,omitempty"`
 	Rating    *int       `json:"rating,omitempty"`
-	RouteId   *string    `json:"routeId,omitempty"`
+	RouteUUID *string    `json:"routeUUID,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
-	UserId    *string    `json:"userId,omitempty"`
-	Uuid      *string    `json:"uuid,omitempty"`
+	UserUUID  *string    `json:"userUUID,omitempty"`
 }
 
 // RouteCreateRequest defines model for RouteCreateRequest.
@@ -44,13 +45,13 @@ type RouteCreateRequest struct {
 
 // RouteDTO defines model for RouteDTO.
 type RouteDTO struct {
+	UUID        *string    `json:"UUID,omitempty"`
 	Coordinates *string    `json:"coordinates,omitempty"`
 	CreatedAt   *time.Time `json:"createdAt,omitempty"`
 	Description *string    `json:"description,omitempty"`
 	Length      *float32   `json:"length,omitempty"`
 	Name        *string    `json:"name,omitempty"`
 	UpdatedAt   *time.Time `json:"updatedAt,omitempty"`
-	Uuid        *string    `json:"uuid,omitempty"`
 }
 
 // RouteUpdateRequest defines model for RouteUpdateRequest.
@@ -61,23 +62,19 @@ type RouteUpdateRequest struct {
 	Name        *string  `json:"name,omitempty"`
 }
 
+// UUIDResponse defines model for UUIDResponse.
+type UUIDResponse struct {
+	Uuid openapi_types.UUID `json:"uuid"`
+}
+
 // VisitCreateRequest defines model for VisitCreateRequest.
 type VisitCreateRequest struct {
-	RouteId string `json:"routeId"`
-	UserId  string `json:"userId"`
+	RouteId  string  `json:"routeId"`
+	UserUUID *string `json:"userUUID,omitempty"`
 }
 
-// VisitDTO defines model for VisitDTO.
-type VisitDTO struct {
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	RouteId   *string    `json:"routeId,omitempty"`
-	UserId    *string    `json:"userId,omitempty"`
-	Uuid      *string    `json:"uuid,omitempty"`
-	VisitTime *time.Time `json:"visitTime,omitempty"`
-}
-
-// RouteId defines model for routeId.
-type RouteId = string
+// RouteUUID defines model for routeUUID.
+type RouteUUID = string
 
 // GetReviewsParams defines parameters for GetReviews.
 type GetReviewsParams struct {
@@ -96,8 +93,8 @@ type PostReviewsJSONRequestBody = ReviewCreateRequest
 // PostRoutesJSONRequestBody defines body for PostRoutes for application/json ContentType.
 type PostRoutesJSONRequestBody = RouteCreateRequest
 
-// PutRoutesRouteIdJSONRequestBody defines body for PutRoutesRouteId for application/json ContentType.
-type PutRoutesRouteIdJSONRequestBody = RouteUpdateRequest
+// PutRoutesRouteUUIDJSONRequestBody defines body for PutRoutesRouteUUID for application/json ContentType.
+type PutRoutesRouteUUIDJSONRequestBody = RouteUpdateRequest
 
 // PostVisitsJSONRequestBody defines body for PostVisits for application/json ContentType.
 type PostVisitsJSONRequestBody = VisitCreateRequest
@@ -120,14 +117,14 @@ type ServerInterface interface {
 	// (POST /routes)
 	PostRoutes(ctx echo.Context) error
 	// Удаление маршрута (soft delete)
-	// (DELETE /routes/{routeId})
-	DeleteRoutesRouteId(ctx echo.Context, routeId RouteId) error
+	// (DELETE /routes/{routeUUID})
+	DeleteRoutesRouteUUID(ctx echo.Context, routeUUID RouteUUID) error
 	// Получение информации о маршруте по ID
-	// (GET /routes/{routeId})
-	GetRoutesRouteId(ctx echo.Context, routeId RouteId) error
+	// (GET /routes/{routeUUID})
+	GetRoutesRouteUUID(ctx echo.Context, routeUUID RouteUUID) error
 	// Обновление маршрута (Административная операция)
-	// (PUT /routes/{routeId})
-	PutRoutesRouteId(ctx echo.Context, routeId RouteId) error
+	// (PUT /routes/{routeUUID})
+	PutRoutesRouteUUID(ctx echo.Context, routeUUID RouteUUID) error
 	// Регистрация прохождения маршрута пользователем
 	// (POST /visits)
 	PostVisits(ctx echo.Context) error
@@ -208,51 +205,51 @@ func (w *ServerInterfaceWrapper) PostRoutes(ctx echo.Context) error {
 	return err
 }
 
-// DeleteRoutesRouteId converts echo context to params.
-func (w *ServerInterfaceWrapper) DeleteRoutesRouteId(ctx echo.Context) error {
+// DeleteRoutesRouteUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) DeleteRoutesRouteUUID(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "routeId" -------------
-	var routeId RouteId
+	// ------------- Path parameter "routeUUID" -------------
+	var routeUUID RouteUUID
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "routeId", runtime.ParamLocationPath, ctx.Param("routeId"), &routeId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "routeUUID", runtime.ParamLocationPath, ctx.Param("routeUUID"), &routeUUID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter routeId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter routeUUID: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.DeleteRoutesRouteId(ctx, routeId)
+	err = w.Handler.DeleteRoutesRouteUUID(ctx, routeUUID)
 	return err
 }
 
-// GetRoutesRouteId converts echo context to params.
-func (w *ServerInterfaceWrapper) GetRoutesRouteId(ctx echo.Context) error {
+// GetRoutesRouteUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) GetRoutesRouteUUID(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "routeId" -------------
-	var routeId RouteId
+	// ------------- Path parameter "routeUUID" -------------
+	var routeUUID RouteUUID
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "routeId", runtime.ParamLocationPath, ctx.Param("routeId"), &routeId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "routeUUID", runtime.ParamLocationPath, ctx.Param("routeUUID"), &routeUUID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter routeId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter routeUUID: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.GetRoutesRouteId(ctx, routeId)
+	err = w.Handler.GetRoutesRouteUUID(ctx, routeUUID)
 	return err
 }
 
-// PutRoutesRouteId converts echo context to params.
-func (w *ServerInterfaceWrapper) PutRoutesRouteId(ctx echo.Context) error {
+// PutRoutesRouteUUID converts echo context to params.
+func (w *ServerInterfaceWrapper) PutRoutesRouteUUID(ctx echo.Context) error {
 	var err error
-	// ------------- Path parameter "routeId" -------------
-	var routeId RouteId
+	// ------------- Path parameter "routeUUID" -------------
+	var routeUUID RouteUUID
 
-	err = runtime.BindStyledParameterWithLocation("simple", false, "routeId", runtime.ParamLocationPath, ctx.Param("routeId"), &routeId)
+	err = runtime.BindStyledParameterWithLocation("simple", false, "routeUUID", runtime.ParamLocationPath, ctx.Param("routeUUID"), &routeUUID)
 	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter routeId: %s", err))
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter routeUUID: %s", err))
 	}
 
 	// Invoke the callback with all the unmarshaled arguments
-	err = w.Handler.PutRoutesRouteId(ctx, routeId)
+	err = w.Handler.PutRoutesRouteUUID(ctx, routeUUID)
 	return err
 }
 
@@ -298,9 +295,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 	router.POST(baseURL+"/reviews", wrapper.PostReviews)
 	router.GET(baseURL+"/routes", wrapper.GetRoutes)
 	router.POST(baseURL+"/routes", wrapper.PostRoutes)
-	router.DELETE(baseURL+"/routes/:routeId", wrapper.DeleteRoutesRouteId)
-	router.GET(baseURL+"/routes/:routeId", wrapper.GetRoutesRouteId)
-	router.PUT(baseURL+"/routes/:routeId", wrapper.PutRoutesRouteId)
+	router.DELETE(baseURL+"/routes/:routeUUID", wrapper.DeleteRoutesRouteUUID)
+	router.GET(baseURL+"/routes/:routeUUID", wrapper.GetRoutesRouteUUID)
+	router.PUT(baseURL+"/routes/:routeUUID", wrapper.PutRoutesRouteUUID)
 	router.POST(baseURL+"/visits", wrapper.PostVisits)
 
 }
@@ -346,7 +343,7 @@ type PostReviewsResponseObject interface {
 	VisitPostReviewsResponse(w http.ResponseWriter) error
 }
 
-type PostReviews201JSONResponse ReviewDTO
+type PostReviews201JSONResponse UUIDResponse
 
 func (response PostReviews201JSONResponse) VisitPostReviewsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -380,7 +377,7 @@ type PostRoutesResponseObject interface {
 	VisitPostRoutesResponse(w http.ResponseWriter) error
 }
 
-type PostRoutes201JSONResponse RouteDTO
+type PostRoutes201JSONResponse UUIDResponse
 
 func (response PostRoutes201JSONResponse) VisitPostRoutesResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -389,60 +386,60 @@ func (response PostRoutes201JSONResponse) VisitPostRoutesResponse(w http.Respons
 	return json.NewEncoder(w).Encode(response)
 }
 
-type DeleteRoutesRouteIdRequestObject struct {
-	RouteId RouteId `json:"routeId"`
+type DeleteRoutesRouteUUIDRequestObject struct {
+	RouteUUID RouteUUID `json:"routeUUID"`
 }
 
-type DeleteRoutesRouteIdResponseObject interface {
-	VisitDeleteRoutesRouteIdResponse(w http.ResponseWriter) error
+type DeleteRoutesRouteUUIDResponseObject interface {
+	VisitDeleteRoutesRouteUUIDResponse(w http.ResponseWriter) error
 }
 
-type DeleteRoutesRouteId204Response struct {
+type DeleteRoutesRouteUUID204Response struct {
 }
 
-func (response DeleteRoutesRouteId204Response) VisitDeleteRoutesRouteIdResponse(w http.ResponseWriter) error {
+func (response DeleteRoutesRouteUUID204Response) VisitDeleteRoutesRouteUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(204)
 	return nil
 }
 
-type GetRoutesRouteIdRequestObject struct {
-	RouteId RouteId `json:"routeId"`
+type GetRoutesRouteUUIDRequestObject struct {
+	RouteUUID RouteUUID `json:"routeUUID"`
 }
 
-type GetRoutesRouteIdResponseObject interface {
-	VisitGetRoutesRouteIdResponse(w http.ResponseWriter) error
+type GetRoutesRouteUUIDResponseObject interface {
+	VisitGetRoutesRouteUUIDResponse(w http.ResponseWriter) error
 }
 
-type GetRoutesRouteId200JSONResponse RouteDTO
+type GetRoutesRouteUUID200JSONResponse RouteDTO
 
-func (response GetRoutesRouteId200JSONResponse) VisitGetRoutesRouteIdResponse(w http.ResponseWriter) error {
+func (response GetRoutesRouteUUID200JSONResponse) VisitGetRoutesRouteUUIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetRoutesRouteId404Response struct {
+type GetRoutesRouteUUID404Response struct {
 }
 
-func (response GetRoutesRouteId404Response) VisitGetRoutesRouteIdResponse(w http.ResponseWriter) error {
+func (response GetRoutesRouteUUID404Response) VisitGetRoutesRouteUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(404)
 	return nil
 }
 
-type PutRoutesRouteIdRequestObject struct {
-	RouteId RouteId `json:"routeId"`
-	Body    *PutRoutesRouteIdJSONRequestBody
+type PutRoutesRouteUUIDRequestObject struct {
+	RouteUUID RouteUUID `json:"routeUUID"`
+	Body      *PutRoutesRouteUUIDJSONRequestBody
 }
 
-type PutRoutesRouteIdResponseObject interface {
-	VisitPutRoutesRouteIdResponse(w http.ResponseWriter) error
+type PutRoutesRouteUUIDResponseObject interface {
+	VisitPutRoutesRouteUUIDResponse(w http.ResponseWriter) error
 }
 
-type PutRoutesRouteId200Response struct {
+type PutRoutesRouteUUID200Response struct {
 }
 
-func (response PutRoutesRouteId200Response) VisitPutRoutesRouteIdResponse(w http.ResponseWriter) error {
+func (response PutRoutesRouteUUID200Response) VisitPutRoutesRouteUUIDResponse(w http.ResponseWriter) error {
 	w.WriteHeader(200)
 	return nil
 }
@@ -455,7 +452,7 @@ type PostVisitsResponseObject interface {
 	VisitPostVisitsResponse(w http.ResponseWriter) error
 }
 
-type PostVisits201JSONResponse VisitDTO
+type PostVisits201JSONResponse UUIDResponse
 
 func (response PostVisits201JSONResponse) VisitPostVisitsResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
@@ -482,14 +479,14 @@ type StrictServerInterface interface {
 	// (POST /routes)
 	PostRoutes(ctx context.Context, request PostRoutesRequestObject) (PostRoutesResponseObject, error)
 	// Удаление маршрута (soft delete)
-	// (DELETE /routes/{routeId})
-	DeleteRoutesRouteId(ctx context.Context, request DeleteRoutesRouteIdRequestObject) (DeleteRoutesRouteIdResponseObject, error)
+	// (DELETE /routes/{routeUUID})
+	DeleteRoutesRouteUUID(ctx context.Context, request DeleteRoutesRouteUUIDRequestObject) (DeleteRoutesRouteUUIDResponseObject, error)
 	// Получение информации о маршруте по ID
-	// (GET /routes/{routeId})
-	GetRoutesRouteId(ctx context.Context, request GetRoutesRouteIdRequestObject) (GetRoutesRouteIdResponseObject, error)
+	// (GET /routes/{routeUUID})
+	GetRoutesRouteUUID(ctx context.Context, request GetRoutesRouteUUIDRequestObject) (GetRoutesRouteUUIDResponseObject, error)
 	// Обновление маршрута (Административная операция)
-	// (PUT /routes/{routeId})
-	PutRoutesRouteId(ctx context.Context, request PutRoutesRouteIdRequestObject) (PutRoutesRouteIdResponseObject, error)
+	// (PUT /routes/{routeUUID})
+	PutRoutesRouteUUID(ctx context.Context, request PutRoutesRouteUUIDRequestObject) (PutRoutesRouteUUIDResponseObject, error)
 	// Регистрация прохождения маршрута пользователем
 	// (POST /visits)
 	PostVisits(ctx context.Context, request PostVisitsRequestObject) (PostVisitsResponseObject, error)
@@ -638,81 +635,81 @@ func (sh *strictHandler) PostRoutes(ctx echo.Context) error {
 	return nil
 }
 
-// DeleteRoutesRouteId operation middleware
-func (sh *strictHandler) DeleteRoutesRouteId(ctx echo.Context, routeId RouteId) error {
-	var request DeleteRoutesRouteIdRequestObject
+// DeleteRoutesRouteUUID operation middleware
+func (sh *strictHandler) DeleteRoutesRouteUUID(ctx echo.Context, routeUUID RouteUUID) error {
+	var request DeleteRoutesRouteUUIDRequestObject
 
-	request.RouteId = routeId
+	request.RouteUUID = routeUUID
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.DeleteRoutesRouteId(ctx.Request().Context(), request.(DeleteRoutesRouteIdRequestObject))
+		return sh.ssi.DeleteRoutesRouteUUID(ctx.Request().Context(), request.(DeleteRoutesRouteUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "DeleteRoutesRouteId")
+		handler = middleware(handler, "DeleteRoutesRouteUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(DeleteRoutesRouteIdResponseObject); ok {
-		return validResponse.VisitDeleteRoutesRouteIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(DeleteRoutesRouteUUIDResponseObject); ok {
+		return validResponse.VisitDeleteRoutesRouteUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
 	return nil
 }
 
-// GetRoutesRouteId operation middleware
-func (sh *strictHandler) GetRoutesRouteId(ctx echo.Context, routeId RouteId) error {
-	var request GetRoutesRouteIdRequestObject
+// GetRoutesRouteUUID operation middleware
+func (sh *strictHandler) GetRoutesRouteUUID(ctx echo.Context, routeUUID RouteUUID) error {
+	var request GetRoutesRouteUUIDRequestObject
 
-	request.RouteId = routeId
+	request.RouteUUID = routeUUID
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.GetRoutesRouteId(ctx.Request().Context(), request.(GetRoutesRouteIdRequestObject))
+		return sh.ssi.GetRoutesRouteUUID(ctx.Request().Context(), request.(GetRoutesRouteUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetRoutesRouteId")
+		handler = middleware(handler, "GetRoutesRouteUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(GetRoutesRouteIdResponseObject); ok {
-		return validResponse.VisitGetRoutesRouteIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(GetRoutesRouteUUIDResponseObject); ok {
+		return validResponse.VisitGetRoutesRouteUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}
 	return nil
 }
 
-// PutRoutesRouteId operation middleware
-func (sh *strictHandler) PutRoutesRouteId(ctx echo.Context, routeId RouteId) error {
-	var request PutRoutesRouteIdRequestObject
+// PutRoutesRouteUUID operation middleware
+func (sh *strictHandler) PutRoutesRouteUUID(ctx echo.Context, routeUUID RouteUUID) error {
+	var request PutRoutesRouteUUIDRequestObject
 
-	request.RouteId = routeId
+	request.RouteUUID = routeUUID
 
-	var body PutRoutesRouteIdJSONRequestBody
+	var body PutRoutesRouteUUIDJSONRequestBody
 	if err := ctx.Bind(&body); err != nil {
 		return err
 	}
 	request.Body = &body
 
 	handler := func(ctx echo.Context, request interface{}) (interface{}, error) {
-		return sh.ssi.PutRoutesRouteId(ctx.Request().Context(), request.(PutRoutesRouteIdRequestObject))
+		return sh.ssi.PutRoutesRouteUUID(ctx.Request().Context(), request.(PutRoutesRouteUUIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PutRoutesRouteId")
+		handler = middleware(handler, "PutRoutesRouteUUID")
 	}
 
 	response, err := handler(ctx, request)
 
 	if err != nil {
 		return err
-	} else if validResponse, ok := response.(PutRoutesRouteIdResponseObject); ok {
-		return validResponse.VisitPutRoutesRouteIdResponse(ctx.Response())
+	} else if validResponse, ok := response.(PutRoutesRouteUUIDResponseObject); ok {
+		return validResponse.VisitPutRoutesRouteUUIDResponse(ctx.Response())
 	} else if response != nil {
 		return fmt.Errorf("unexpected response type: %T", response)
 	}

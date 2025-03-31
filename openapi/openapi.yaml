@@ -34,7 +34,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserDTO"
+                $ref: "#/components/schemas/UUIDResponse"
         "400":
           description: Некорректный ввод
 
@@ -59,13 +59,13 @@ paths:
         "401":
           description: Неавторизовано
 
-  /users/{userId}:
+  /users/{userUUID}:
     get:
       tags:
         - user
       summary: Получить профиль пользователя
       parameters:
-        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/userUUID"
       responses:
         "200":
           description: Профиль пользователя получен
@@ -80,7 +80,7 @@ paths:
         - user
       summary: Обновление профиля пользователя
       parameters:
-        - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/userUUID"
       requestBody:
         required: true
         content:
@@ -90,6 +90,10 @@ paths:
       responses:
         "200":
           description: Пользователь успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserDTO"
         "400":
           description: Некорректный ввод
 
@@ -132,15 +136,15 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/RouteDTO"
+                $ref: "#/components/schemas/UUIDResponse"
 
-  /routes/{routeId}:
+  /routes/{routeUUID}:
     get:
       tags:
         - route
       summary: Получение информации о маршруте по ID
       parameters:
-        - $ref: "#/components/parameters/routeId"
+        - $ref: "#/components/parameters/routeUUID"
       responses:
         "200":
           description: Детали маршрута
@@ -155,7 +159,7 @@ paths:
         - route
       summary: Обновление маршрута (Административная операция)
       parameters:
-        - $ref: "#/components/parameters/routeId"
+        - $ref: "#/components/parameters/routeUUID"
       requestBody:
         required: true
         content:
@@ -170,7 +174,7 @@ paths:
         - route
       summary: Удаление маршрута (soft delete)
       parameters:
-        - $ref: "#/components/parameters/routeId"
+        - $ref: "#/components/parameters/routeUUID"
       responses:
         "204":
           description: Маршрут удален
@@ -192,7 +196,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VisitDTO"
+                $ref: "#/components/schemas/UUIDResponse"
 
   /reviews:
     post:
@@ -211,7 +215,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ReviewDTO"
+                $ref: "#/components/schemas/UUIDResponse"
     get:
       tags:
         - route
@@ -248,20 +252,28 @@ paths:
 
 components:
   parameters:
-    userId:
-      name: userId
+    userUUID:
+      name: userUUID
       in: path
       required: true
       schema:
         type: string
-    routeId:
-      name: routeId
+    routeUUID:
+      name: routeUUID
       in: path
       required: true
       schema:
         type: string
 
   schemas:
+    UUIDResponse:
+      type: object
+      required:
+        - uuid
+      properties:
+        uuid:
+          format: uuid
+          type: string
     UserRegisterRequest:
       type: object
       properties:
@@ -292,7 +304,7 @@ components:
     UserDTO:
       type: object
       properties:
-        uuid:
+        UUID:
           type: string
         email:
           type: string
@@ -316,7 +328,7 @@ components:
     RouteDTO:
       type: object
       properties:
-        uuid:
+        UUID:
           type: string
         name:
           type: string
@@ -360,7 +372,7 @@ components:
     VisitDTO:
       type: object
       properties:
-        uuid:
+        UUID:
           type: string
         userId:
           type: string
@@ -375,7 +387,7 @@ components:
     VisitCreateRequest:
       type: object
       properties:
-        userId:
+        userUUID:
           type: string
         routeId:
           type: string
@@ -385,11 +397,11 @@ components:
     ReviewDTO:
       type: object
       properties:
-        uuid:
+        UUID:
           type: string
-        userId:
+        userUUID:
           type: string
-        routeId:
+        routeUUID:
           type: string
         rating:
           type: integer
@@ -404,15 +416,15 @@ components:
     ReviewCreateRequest:
       type: object
       properties:
-        userId:
+        userUUID:
           type: string
-        routeId:
+        routeUUID:
           type: string
         rating:
           type: integer
         comment:
           type: string
       required:
-        - userId
-        - routeId
+        - userUUID
+        - routeUUID
         - rating
