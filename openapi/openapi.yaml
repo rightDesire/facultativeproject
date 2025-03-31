@@ -1,0 +1,19 @@
+openapi: 3.0.4
+info:
+  version: 0.0.1
+  title: CRM API
+  description: A main CRM API
+  contact:
+    name: rightDesire
+
+servers:
+  - url: "localhost:8080"
+    description: Dev server
+
+tags:
+  - name: user
+    description: User
+  - name: route
+    description: Route
+  
+  

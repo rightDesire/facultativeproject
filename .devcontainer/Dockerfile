@@ -33,3 +33,8 @@ RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.0/
 # [Package] wire
 
 RUN go install github.com/google/wire/cmd/wire@latest
+
+# [Package] Proto gen
+
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
