@@ -6,8 +6,8 @@ run:
 wire:
 	wire ./internal/app/
 
-.PHONY: proto
-proto:
+.PHONY: proto-gen
+proto-gen:
 	protoc -I proto \
 		--go_out=paths=source_relative:./internal/users/proto \
 		--go-grpc_out=paths=source_relative:./internal/users/proto \
