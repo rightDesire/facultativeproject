@@ -16,7 +16,7 @@ RUN curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | sud
 # [Pakage] Install openapi
 RUN go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 
-RUN chmod -R a+rwX $(go env GOMODCACHE)
+RUN chmod -R a+rwX /go/pkg
 
 RUN BIN="/usr/local/bin" && \
     VERSION="1.26.1" && \
