@@ -1,11 +1,20 @@
 services:
-  app:
+  api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: api/Dockerfile
     command: sleep infinity
     volumes:
-      - ../:/workspaces/facultativeproject:cached
+      - ../api:/workspaces/facultativeproject/api:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  dbservice:
+    build:
+      context: .
+      dockerfile: service/Dockerfile
+    command: sleep infinity
+    volumes:
+      - ../dbservice:/workspaces/facultativeproject/dbservice:cached
       - /var/run/docker.sock:/var/run/docker.sock
 
   postgres:

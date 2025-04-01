@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/rightDesire/facultativeproject/common/proto;proto";
+
+import "google/protobuf/timestamp.proto";
+
+message User {
+  string UUID = 1;
+  string email = 2;
+  string password = 3;
+  string fullName = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+  google.protobuf.Timestamp deletedAt = 7;
+}
+
+message CreateUserRequest {
+  User user = 1;
+}
+
+message CreateUserResponse {
+  string userUUID = 1;
+}
+
+message LoginUserRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginUserResponse {
+  string token = 1;
+}
+
+message GetUserUserUUIDRequest {
+  string userUUID = 1;
+}
+
+message GetUserUserUUIDResponse {
+  User user = 1;
+}
+
+message PutUserUserUUIDRequest {
+  string userUUID = 1;
+}
+
+message PutUserUserUUIDResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+  rpc GetUserUserUUID(GetUserUserUUIDRequest) returns (GetUserUserUUIDResponse);
+  rpc PutUserUserUUID(PutUserUserUUIDRequest) returns (PutUserUserUUIDResponse);
+}
