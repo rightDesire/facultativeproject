@@ -49,7 +49,7 @@ message PutUserUserUUIDResponse {
   User user = 1;
 }
 
-service UserRepository {
+service UserService {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
   rpc GetUserUserUUID(GetUserUserUUIDRequest) returns (GetUserUserUUIDResponse);

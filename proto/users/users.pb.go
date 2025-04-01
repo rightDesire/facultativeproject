@@ -503,8 +503,8 @@ const file_proto_users_users_proto_rawDesc = "" +
 	"\x16PutUserUserUUIDRequest\x12\x1a\n" +
 	"\buserUUID\x18\x01 \x01(\tR\buserUUID\":\n" +
 	"\x17PutUserUserUUIDResponse\x12\x1f\n" +
-	"\x04user\x18\x01 \x01(\v2\v.users.UserR\x04user2\xb7\x02\n" +
-	"\x0eUserRepository\x12A\n" +
+	"\x04user\x18\x01 \x01(\v2\v.users.UserR\x04user2\xb4\x02\n" +
+	"\vUserService\x12A\n" +
 	"\n" +
 	"CreateUser\x12\x18.users.CreateUserRequest\x1a\x19.users.CreateUserResponse\x12>\n" +
 	"\tLoginUser\x12\x17.users.LoginUserRequest\x1a\x18.users.LoginUserResponse\x12P\n" +
@@ -543,14 +543,14 @@ var file_proto_users_users_proto_depIdxs = []int32{
 	0,  // 3: users.CreateUserRequest.user:type_name -> users.User
 	0,  // 4: users.GetUserUserUUIDResponse.user:type_name -> users.User
 	0,  // 5: users.PutUserUserUUIDResponse.user:type_name -> users.User
-	1,  // 6: users.UserRepository.CreateUser:input_type -> users.CreateUserRequest
-	3,  // 7: users.UserRepository.LoginUser:input_type -> users.LoginUserRequest
-	5,  // 8: users.UserRepository.GetUserUserUUID:input_type -> users.GetUserUserUUIDRequest
-	7,  // 9: users.UserRepository.PutUserUserUUID:input_type -> users.PutUserUserUUIDRequest
-	2,  // 10: users.UserRepository.CreateUser:output_type -> users.CreateUserResponse
-	4,  // 11: users.UserRepository.LoginUser:output_type -> users.LoginUserResponse
-	6,  // 12: users.UserRepository.GetUserUserUUID:output_type -> users.GetUserUserUUIDResponse
-	8,  // 13: users.UserRepository.PutUserUserUUID:output_type -> users.PutUserUserUUIDResponse
+	1,  // 6: users.UserService.CreateUser:input_type -> users.CreateUserRequest
+	3,  // 7: users.UserService.LoginUser:input_type -> users.LoginUserRequest
+	5,  // 8: users.UserService.GetUserUserUUID:input_type -> users.GetUserUserUUIDRequest
+	7,  // 9: users.UserService.PutUserUserUUID:input_type -> users.PutUserUserUUIDRequest
+	2,  // 10: users.UserService.CreateUser:output_type -> users.CreateUserResponse
+	4,  // 11: users.UserService.LoginUser:output_type -> users.LoginUserResponse
+	6,  // 12: users.UserService.GetUserUserUUID:output_type -> users.GetUserUserUUIDResponse
+	8,  // 13: users.UserService.PutUserUserUUID:output_type -> users.PutUserUserUUIDResponse
 	10, // [10:14] is the sub-list for method output_type
 	6,  // [6:10] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
