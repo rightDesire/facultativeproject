@@ -8,9 +8,9 @@ wire:
 
 .PHONY: proto-gen
 proto-gen:
-	protoc -I proto \
-		--go_out=paths=source_relative:./internal/users/proto \
-		--go-grpc_out=paths=source_relative:./internal/users/proto \
+	protoc -I . \
+		--go_out=paths=source_relative:. \
+		--go-grpc_out=paths=source_relative:. \
 		proto/users/*.proto
 
 .PHONY: gen

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.21.12
-// source: users/users.proto
+// source: proto/users/users.proto
 
 package users
 
@@ -28,8 +28,6 @@ const (
 // UserRepositoryClient is the client API for UserRepository service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// Сервис репозитория, определяющий RPC-методы.
 type UserRepositoryClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
@@ -88,8 +86,6 @@ func (c *userRepositoryClient) PutUserUserUUID(ctx context.Context, in *PutUserU
 // UserRepositoryServer is the server API for UserRepository service.
 // All implementations must embed UnimplementedUserRepositoryServer
 // for forward compatibility.
-//
-// Сервис репозитория, определяющий RPC-методы.
 type UserRepositoryServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
@@ -235,5 +231,5 @@ var UserRepository_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "users/users.proto",
+	Metadata: "proto/users/users.proto",
 }
