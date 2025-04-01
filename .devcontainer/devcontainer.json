@@ -3,7 +3,7 @@
 {
 	"name": "Go",
 	"dockerComposeFile": "./docker-compose.yaml",
-	"service": "app",
+	"service": "api",
 	"workspaceFolder": "/workspaces/facultativeproject",
 	"customizations": {
 		"vscode": {

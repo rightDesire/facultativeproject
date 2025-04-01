@@ -8,9 +8,7 @@ FROM mcr.microsoft.com/vscode/devcontainers/go:${VARIANT}
 
 USER root
 
-# Устанавливаем protoc (protobuf-compiler), чтобы генерировать *.pb.go
-RUN apt-get update && \
-    apt-get install -y protobuf-compiler
+RUN apt-get update
 
 # Пример установки act (GitHub Actions local runner)
 RUN curl -s https://raw.githubusercontent.com/nektos/act/master/install.sh | bash
@@ -36,8 +34,6 @@ USER vscode
 
 # Устанавливаем нужные Go-бинари
 RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2 && \
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@latest && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && \
     go install github.com/google/wire/cmd/wire@latest
 
 ###############################################################################
