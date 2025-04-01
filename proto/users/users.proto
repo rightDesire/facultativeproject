@@ -49,7 +49,6 @@ message PutUserUserUUIDResponse {
   User user = 1;
 }
 
-// Сервис репозитория, определяющий RPC-методы.
 service UserRepository {
   rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
   rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
