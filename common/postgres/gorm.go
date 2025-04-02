@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/wire"
 	"github.com/rightDesire/facultativeproject/common/helpers"
 
 	"github.com/sirupsen/logrus"
@@ -106,3 +107,5 @@ func (l *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (stri
 		logrus.WithContext(ctx).WithFields(fields).Debugf("%s [%s]", sql, elapsed)
 	}
 }
+
+var ProviderSet = wire.NewSet(NewGDB)

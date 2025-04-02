@@ -3,22 +3,21 @@ package users
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/google/wire"
 	dm "github.com/rightDesire/facultativeproject/common/domain"
 	"github.com/rightDesire/facultativeproject/common/helpers"
 	pb "github.com/rightDesire/facultativeproject/common/proto/generated"
 )
 
-type IUserRepository interface {
-	CreateUser(dm.User) (uuid.UUID, error)
-	LoginUser()
-	GetUserUserUUID()
-	PutUserUserUUID()
-}
-
 type UserServiceServer struct {
 	pb.UnimplementedUserServiceServer
 	repo IUserRepository
+}
+
+func NewUserServiceServer(r IUserRepository) *UserServiceServer {
+	return &UserServiceServer{
+		repo: r,
+	}
 }
 
 func (s *UserServiceServer) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.CreateUserResponse, error) {
@@ -49,3 +48,5 @@ func (s *UserServiceServer) GetUserUserUUID(ctx context.Context, req *pb.GetUser
 func (s *UserServiceServer) PutUserUserUUID(cxt context.Context, req *pb.PutUserUserUUIDRequest) (res *pb.PutUserUserUUIDResponse, err error) {
 	panic("Implemented me")
 }
+
+var ServiceProviderSet = wire.NewSet(NewUserServiceServer)

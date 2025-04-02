@@ -2,9 +2,17 @@ package users
 
 import (
 	"github.com/google/uuid"
+	"github.com/google/wire"
 	dm "github.com/rightDesire/facultativeproject/common/domain"
 	"github.com/rightDesire/facultativeproject/common/postgres"
 )
+
+type IUserRepository interface {
+	CreateUser(dm.User) (uuid.UUID, error)
+	LoginUser()
+	GetUserUserUUID()
+	PutUserUserUUID()
+}
 
 type UserRepository struct {
 	gorm *postgres.GDB
@@ -42,3 +50,5 @@ func (r *UserRepository) GetUserUserUUID() {
 func (r *UserRepository) PutUserUserUUID() {
 	panic("Implemented me")
 }
+
+var RepositoryProviderSet = wire.NewSet(NewRepository)
